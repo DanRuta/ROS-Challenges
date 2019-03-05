@@ -1,0 +1,15 @@
+#!/usr/bin/env sh
+# generated from catkin/python/catkin/environment_cache.py
+
+# based on a snapshot of the environment before and after calling the setup script
+# it emulates the modifications of the setup script without recurring computations
+
+# new environment variables
+
+# modified environment variables
+export CMAKE_PREFIX_PATH="/home/metakunix16/ROS-Path-Planning/devel:/home/metakunix16/eee3043_ws/devel:/home/metakunix16/catkin_ws/devel:/opt/ros/kinetic"
+export LD_LIBRARY_PATH="/home/metakunix16/ROS-Path-Planning/devel/lib:/home/metakunix16/eee3043_ws/devel/lib:/home/metakunix16/catkin_ws/devel/lib:/opt/ros/kinetic/lib:/opt/ros/kinetic/lib/x86_64-linux-gnu"
+export PATH="/opt/ros/kinetic/bin:/home/metakunix16/bin:/home/metakunix16/.local/bin:/home/metakunix16/.scripts:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/mnt/c/Program Files/WindowsApps/CanonicalGroupLimited.Ubuntu16.04onWindows_1604.2018.820.0_x64__79rhkp1fndgsc:/mnt/c/Anaconda3:/mnt/c/Anaconda3/Library/mingw-w64/bin:/mnt/c/Anaconda3/Library/bin:/mnt/c/Anaconda3/Scripts:/mnt/c/Program Files (x86)/Common Files/Oracle/Java/javapath_target_719352140:/mnt/c/Program Files (x86)/Intel/Intel(R) Management Engine Components/iCLS:/mnt/c/Program Files/Intel/Intel(R) Management Engine Components/iCLS:/mnt/c/Windows/System32:/mnt/c/Windows:/mnt/c/Windows/System32/wbem:/mnt/c/Windows/System32/WindowsPowerShell/v1.0:/mnt/c/Windows/System32/OpenSSH:/mnt/c/Program Files (x86)/Intel/Intel(R) Management Engine Components/DAL:/mnt/c/Program Files/Intel/Intel(R) Management Engine Components/DAL:/mnt/c/Program Files (x86)/Intel/Intel(R) Management Engine Components/IPT:/mnt/c/Program Files/Intel/Intel(R) Management Engine Components/IPT:/mnt/c/Program Files/Intel/WiFi/bin:/mnt/c/Program Files/Common Files/Intel/WirelessCommon:/mnt/c/Program Files (x86)/NVIDIA Corporation/PhysX/Common:/mnt/c/Program Files/MiKTeX 2.9/miktex/bin/x64:/mnt/c/Program Files/Microsoft VS Code/bin:/mnt/c/Program Files/Git/cmd:/mnt/c/Program Files/MATLAB/R2018a/runtime/win64:/mnt/c/Program Files/MATLAB/R2018a/bin:/mnt/c/cygwin64/bin:/mnt/c/Program Files/Java/jdk1.8.0_181/bin:/mnt/c/Program Files (x86)/IncrediBuild:/mnt/c/Program Files/PuTTY:/mnt/c/Program Files/NVIDIA Corporation/NVIDIA NvDLISR:/mnt/c/Users/META-K/AppData/Local/Microsoft/WindowsApps:/mnt/c/Program Files/snap/bin:/mnt/c/Program Files (x86)/Nmap:/mnt/c/Users/META-K/AppData/Local/GitHubDesktop/bin"
+export PWD="/home/metakunix16/ROS-Path-Planning/build"
+export ROSLISP_PACKAGE_DIRECTORIES="/home/metakunix16/ROS-Path-Planning/devel/share/common-lisp:/home/metakunix16/eee3043_ws/devel/share/common-lisp:/home/metakunix16/catkin_ws/devel/share/common-lisp"
+export ROS_PACKAGE_PATH="/home/metakunix16/ROS-Path-Planning/src:/home/metakunix16/eee3043_ws/src:/home/metakunix16/catkin_ws/src:/opt/ros/kinetic/share"
