@@ -12,7 +12,7 @@
 			<origin xyz="0 0 -0.03125" rpy="1.5707 0 0"/>
 			<geometry>
 				<box size="0.1 0.1 0.1"/>
-				<meshfile name="package://turtlebot_explorer/meshes/rplidar.dae" scale="0.001 0.001 0.001" />
+				<meshfile name="package://BLAHPACKAGENAME/meshes/rplidar.dae" scale="0.001 0.001 0.001" />
 			</geometry>			
 		</vision>
 
