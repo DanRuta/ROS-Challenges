@@ -4,5 +4,5 @@ PROJECT_PKG_CONFIG_INCLUDE_DIRS = "".split(';') if "" != "" else []
 PROJECT_CATKIN_DEPENDS = "".replace(';', ' ')
 PKG_CONFIG_LIBRARIES_WITH_PREFIX = "".split(';') if "" != "" else []
 PROJECT_NAME = "kk-ch2"
-PROJECT_SPACE_DIR = "/home/metakunix16/ROS-Path-Planning/devel"
+PROJECT_SPACE_DIR = "/user/HS124/kk00730/ROS-Path-Planning/devel"
 PROJECT_VERSION = "0.0.0"
