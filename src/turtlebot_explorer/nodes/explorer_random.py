@@ -52,6 +52,9 @@ class RandomExplorer(Explorer):
         # Get Number of Explored Cells
         cells_explored = np.count_nonzero(gridmap > -1)
         rospy.loginfo("Cells Explored %i", cells_explored)
+        rospy.loginfo("########################kk")
+        rospy.loginfo("GridMap:" + str(gridmap))
+        rospy.loginfo("########################kk")
 
         # Create an Array with Cells to Pick
         cells = 0
