@@ -106,6 +106,81 @@ class RandomExplorer(Explorer):
 
         return bool
 
+    # Get the means, size of frontier, and Euclidean distance to the mean
+    def getFrontierData(self, robotPos, frontierPoints):
+
+        groups = self.groupFrontiers(frontierPoints)
+        means = []
+        sizes = []
+        distances = []
+
+        for group in groups:
+
+            mean = [0, 0]
+
+            for [x,y] in group:
+                mean[0] += x
+                mean[1] += y
+
+            mean[0] /= len(group)
+            mean[1] /= len(group)
+            means.append(mean)
+            sizes.append(len(group))
+            distances.append(sqrt((mean[0]-robotPos[0])**2, (mean[1]-robotPos[1])**2))
+
+        return means, sizes, distances
+
+    # Return the x,y coordinates to the closest median point along the grouped up frontiers
+    def pickMove(self, robotPos, frontierPoints):
+
+        groups = self.groupFrontiers(frontierPoints)
+        distances = []
+        medians = []
+        shortestDistanceGroup = 0
+        shortestDistance = 100000
+
+        for g in range(len(groups)):
+            median = groups[g][floor(len(groups[g])/2)]
+            euclideanToMedian = sqrt((median[0]-robotPos[0])**2, (median[1]-robotPos[1])**2)
+            distances.append(euclideanToMedian)
+
+            if euclideanToMedian < shortestDistance:
+                shortestDistance = euclideanToMedian
+                shortestDistanceGroup = g
+
+        return medians[shortestDistanceGroup]
+
+
+
+    # Get a list of grouped up frontier points
+    def groupFrontiers(self, frontierPoints):
+
+        THRESHOLD = 1
+
+        # A 2D array, of grouped up points
+        groups = [[frontierPoints[0]]]
+
+        # Loop through all the frontier points, except the first
+        for [x,y] in range(1, len(frontierPoints)):
+
+            # Loop through every group, and check if this point is within
+            # 1, in both x and y of every point, and assign this point to the group,
+            # else create a new group, and assign this point, as the first in the group
+            groupFound = False
+            for g in range(len(groups)):
+                for [x2,y2] in groups[g]:
+                    # If the two points are at most at corners, to each other, they are adjacent
+                    # (Euclidean distance)
+                    if sqrt((x2-x)**2 + (y2-y)**2) <= THRESHOLD and not groupFound:
+                    # They are adjacent, so add them to this group
+                        groups[g].append([x,y])
+                        groupFound = True
+
+            # No group has points that are near this point, so create a new group
+            # So make a new group, and add this point to it
+            if not groupFound:
+                groups.append([[x,y]])
+
 
 
 
