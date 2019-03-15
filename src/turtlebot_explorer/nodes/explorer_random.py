@@ -45,7 +45,9 @@ class RandomExplorer(Explorer):
     def get_goal(self, cells_to_pick, map_origin, res):
         # Pick Cell
 
-        cells_nonzero = np.count_nonzero(cells_to_pick > 0)
+        cells_to_pick_merged = np.sum(cells_to_pick, axis=1)
+
+        cells_nonzero = np.count_nonzero(cells_to_pick_merged > 0)
         rospy.loginfo("Cells nonzero %i", cells_nonzero)
 
         #rand_idx = np.random.randint(0, len(cells_to_pick))
