@@ -2,20 +2,29 @@ import os
 import numpy as np
 import cv2 as cv
 
+MAP_FILE_NAME = "map_not_explored.txt"
+# MAP_FILE_NAME = "map_half_done.txt"
+
 def main():
 
-    with open("map_not_explored.txt", "r") as file:
-    # with open("map_half_done.txt", "r") as file:
+    with open(MAP_FILE_NAME, "r") as file:
 
         lines = file.read().split("\n")
 
         HEIGHT = 1056
         WIDTH = 1216
 
+        UPDATE_BOUNDS = False
         firstX = 0
         firstY = 0
         endX = 0
         endY = 0
+
+        if not UPDATE_BOUNDS:
+            firstX = 226
+            firstY = 167
+            endX = 847
+            endY = 795
 
         img = cv.UMat(np.array(np.zeros((HEIGHT,WIDTH,3), np.uint8)))
 
@@ -24,16 +33,24 @@ def main():
 
                 mapVal = float(lines[r * WIDTH + c])
 
-                if firstX==0 and firstY==0 and mapVal>=0:
-                    firstX = c
-                    firstY = r
-
                 if mapVal>=0:
+                    if UPDATE_BOUNDS and firstX==0 and firstY==0 and mapVal>=0:
+                        firstX = c
+                        firstY = r
+
+                    firstX = min(firstX, c)
+                    firstY = min(firstY, r)
+
                     val = int(float(lines[r * WIDTH + c]) * 1.55) + 100
                     cv.circle(img, (c, r), 1, (val, val, val), thickness=-1, lineType=cv.FILLED)
 
-                endX = c
-                endY = r
+                    if UPDATE_BOUNDS:
+                        endX = c
+                        endY = r
+
+        cv.circle(img, (firstX, firstY), 5, (100, 200, 100), thickness=-1, lineType=cv.FILLED)
+        cv.circle(img, (endX, endY), 5, (200, 100, 100), thickness=-1, lineType=cv.FILLED)
+
 
         # cv.imshow("Frame", img)
         # while True:
@@ -41,13 +58,11 @@ def main():
         #         break
 
 
-        cv.imwrite("frame.png", img)
+        cv.imwrite("{}_frame.png".format(MAP_FILE_NAME[0:len(MAP_FILE_NAME)-4]), img)
         cv.destroyAllWindows()
 
 
-        totalArea = endX-firstX * endY-firstY
-        print(endX-firstX)
-        print(endY-firstY)
+        totalArea = (endX-firstX) * (endY-firstY)
         totalFound = 0
 
         print("firstX: {}".format(firstX))
