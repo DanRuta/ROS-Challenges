@@ -9,7 +9,7 @@ from actionlib_msgs.msg import GoalStatus
 
 
 class GoalSender:
-    lastStatus = -1
+
     def __init__(self):
 
         #Create action client
@@ -37,7 +37,7 @@ class GoalSender:
 
     def done_cb(self, status, result):
         # Reference for terminal status values: http://docs.ros.org/api/actionlib_msgs/html/msg/GoalStatus.html
-        self.lastStatus = status
+
         if status == 0:
             rospy.loginfo("The goal has yet to be processed by the action server")
 

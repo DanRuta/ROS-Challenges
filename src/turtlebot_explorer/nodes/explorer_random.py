@@ -53,8 +53,8 @@ class RandomExplorer(Explorer):
 
 
         goal = cells_to_pick[rand_idx]
-        goal = (goal * res) + map_origin
         self.prevGoal = goal
+        goal = (goal * res) + map_origin
         return goal
 
     # Overload get_valid_cells to return explored cells
@@ -80,22 +80,32 @@ class RandomExplorer(Explorer):
         cells = 0
         cells_to_pick = np.zeros((cells_explored, 2))
         #cells_to_pick = np.zeros((cells_positive, 2))
-        # if prevGoal is None:
-            for y in xrange(0, height):
-                for x in xrange(0, width):
-                    idx = x + y * width
-                    if gridmap[idx] == 0 and (gridmap[idx-width-1] == -1 or gridmap[idx-width] == -1 or gridmap[idx-width+1] == -1 or gridmap[idx-1] == -1 or gridmap[idx+1] == -1 or gridmap[idx+width-1] == -1 or gridmap[idx+width] == -1 or gridmap[idx+width+1] == -1):
-                        #if gridmap[idx] > -1 and gridmap[idx] < mn:
-                        #if gridmap[idx] > -1:
-                        #if self.check_cell_region(gridmap, x, y, width):
-                        cells_to_pick[cells][0] = x
-                        cells_to_pick[cells][1] = y
-                        cells = cells + 1
-        # else:
-            # for between this shit
+
+        for y in xrange(0, height):
+            for x in xrange(0, width):
+                idx = x + y * width
+                if self.is_boundary(gridmap, idx, width):
+                    #if gridmap[idx] > -1 and gridmap[idx] < mn:
+                    #if gridmap[idx] > -1:
+                    #if self.check_cell_region(gridmap, x, y, width):
+                    cells_to_pick[cells][0] = x
+                    cells_to_pick[cells][1] = y
+                    cells = cells + 1
+
+
 
 
         return cells_to_pick
+
+    def is_boundary(self, gridmap, idx, width):
+
+        if gridmap[idx] == 0 and (gridmap[idx-width-1] == -1 or gridmap[idx-width] == -1 or gridmap[idx-width+1] == -1 or gridmap[idx-1] == -1 or gridmap[idx+1] == -1 or gridmap[idx+width-1] == -1 or gridmap[idx+width] == -1 or gridmap[idx+width+1] == -1):
+            bool = True
+        else:
+            bool = False
+
+        return bool
+
 
 
 
