@@ -61,10 +61,10 @@ class RandomExplorer(Explorer):
             if self.is_good_goal(goal[0], goal[1], 5, 5, 15, 5, 5):
                 self.prevGoal = goal
 
-                rospy.loginfo("Goal X: %i: ", goal[0])
-                rospy.loginfo("Goal Y: %i: ", goal[1])
-                rospy.loginfo(str(type(goal)))
-                rospy.loginfo(str(res))
+                #rospy.loginfo("Goal X: %i: ", goal[0])
+                #rospy.loginfo("Goal Y: %i: ", goal[1])
+                #rospy.loginfo(str(type(goal)))
+                #rospy.loginfo(str(res))
                 goal = (goal * res) + map_origin
                 return goal
 
@@ -82,7 +82,7 @@ class RandomExplorer(Explorer):
 
         limitX = int(np.floor(kernelX/2))
         limitY = int(np.floor(kernelY/2))
-        rospy.loginfo("--------------------GOOD GOAL-------------------------------------")
+        #rospy.loginfo("--------------------GOOD GOAL-------------------------------------")
         idx = x + y * width
 
         for i in range(-limitX, limitX+1):
@@ -101,10 +101,10 @@ class RandomExplorer(Explorer):
                         else:
                             sumWall = sumWall + 1
 
-        rospy.loginfo("sum wall %i", sumWall)
-        rospy.loginfo("sum free %i", sumFree)
-        rospy.loginfo("sum unknow %i", sumUnknown)
-        rospy.loginfo("--------------------CLOSE GOOD GOAL-------------------------------------")
+        #rospy.loginfo("sum wall %i", sumWall)
+        #rospy.loginfo("sum free %i", sumFree)
+        #rospy.loginfo("sum unknow %i", sumUnknown)
+        #rospy.loginfo("--------------------CLOSE GOOD GOAL-------------------------------------")
         # if sumFree > thFree and sumUnknown > thUnknown:
 
         if sumFree > thFree and sumUnknown > thUnknown and sumWall < thWall:
@@ -126,6 +126,7 @@ class RandomExplorer(Explorer):
         cells = 0
         cells_close = 0
         cells_mid = 0
+        cells_mid_2 = 0
         cells_far = 0
 
         #cells_to_pick = np.zeros((cells_explored, 2))
@@ -133,10 +134,12 @@ class RandomExplorer(Explorer):
 
         cells_to_pick_close = np.zeros((cells_explored, 2))
         cells_to_pick_mid = np.zeros((cells_explored, 2))
+        cells_to_pick_mid_2 = np.zeros((cells_explored, 2))
         cells_to_pick_far = np.zeros((cells_explored, 2))
 
-        th_close = 80
-        th_mid = 120
+        th_close = 60
+        th_mid = 90
+        th_mid_2 = 120
 
         for y in xrange(0, height):
             for x in xrange(0, width):
@@ -153,29 +156,41 @@ class RandomExplorer(Explorer):
                         cells_to_pick_mid[cells_mid][0] = x
                         cells_to_pick_mid[cells_mid][1] = y
                         cells_mid = cells_mid + 1
+                    elif self.prevGoal is None or self.euclideanDistance_goal(self.prevGoal, x, y, th_mid_2):
+                        cells_to_pick_mid_2[cells_mid_2][0] = x
+                        cells_to_pick_mid_2[cells_mid_2][1] = y
+                        cells_mid_2 = cells_mid_2 + 1
                     else:
                         cells_to_pick_far[cells_far][0] = x
                         cells_to_pick_far[cells_far][1] = y
                         cells_far = cells_far + 1
 
 
-        rospy.loginfo("***************************************")
-        rospy.loginfo("***************************************")
+        #rospy.loginfo("***************************************")
+        #rospy.loginfo("***************************************")
         rospy.loginfo("***************************************")
         rospy.loginfo("Cells close %i", cells_close)
         rospy.loginfo("Cells mid %i", cells_mid)
+        rospy.loginfo("Cells mid2 %i", cells_mid_2)
         rospy.loginfo("Cells far %i", cells_far)
 
-        if cells_mid > 20 and self.imStuck == False:
+
+        if cells_mid_2 > 20 and self.imStuck == False:
+            cells_to_pick = np.resize(cells_to_pick_mid_2,(cells_mid_2,2))
+            rospy.loginfo("I choose cells mid 2")
+        elif cells_mid > 20 and self.imStuck == False:
             cells_to_pick = np.resize(cells_to_pick_mid,(cells_mid,2))
+            rospy.loginfo("I choose cells mid")
         elif cells_far > 20:
             cells_to_pick = np.resize(cells_to_pick_far,(cells_far,2))
+            rospy.loginfo("I choose cells far")
         else:
             cells_to_pick = np.resize(cells_to_pick_close,(cells_close,2))
+            rospy.loginfo("I choose cells close")
 
-        rospy.loginfo("***************************************")
-        rospy.loginfo("***************************************")
-        rospy.loginfo("***************************************")
+        #rospy.loginfo("***************************************")
+        #rospy.loginfo("***************************************")
+        #rospy.loginfo("***************************************")
 
         #cells_to_pick = np.resize(cells_to_pick,(cells,2))
         return cells_to_pick
