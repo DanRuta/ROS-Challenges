@@ -4,7 +4,6 @@ from __future__ import print_function
 import rospy
 import numpy as np
 from nav_msgs.msg import OccupancyGrid
-from nav_msgs.msg import Odometry
 from geometry_msgs.msg import PoseStamped
 
 import cv2
@@ -14,6 +13,7 @@ from explorer_base import Explorer
 class RandomExplorer(Explorer):
 
     prevGoal = None
+    imStuck = False
 
     def __init__(self):
 
@@ -42,69 +42,101 @@ class RandomExplorer(Explorer):
         rospy.loginfo("Got a map!")
         self.update_map(msg)
 
-    def get_myPos(self, map_origin, res):
-        myPos = rospy.wait_for_message("/odom", Odometry)
-        #rospy.loginfo("####################################YAY! I found me!")
-        #rospy.loginfo(str(myPos.pose.pose.position))
-        myX = myPos.pose.pose.position.x
-        myY = myPos.pose.pose.position.y
-        #rospy.loginfo("######################################## in X & Y!")
-        #rospy.loginfo(str(myX))
-        #rospy.loginfo(str(myY))
-        myPosXY = [myX, myY]
-        #rospy.loginfo("######################################## MAP Origin!")
-        #rospy.loginfo(str(map_origin))
-        myIdx = np.floor((myPosXY - map_origin)/res)
-        myIdx = [int(myIdx[0]), int(myIdx[1])]
-        #rospy.loginfo("######################################## Pos in Indices!")
-        #rospy.loginfo(str(myIdx))
-        return myIdx
-
     # Overload get_goal to select Random Valid Cell
     def get_goal(self, cells_to_pick, map_origin, res):
         # Pick Cell
-        # Randomly Select a frontier cell
-        # cells_to_pick_merged = np.sum(cells_to_pick, axis=1)
-        # cells_nonzero = np.count_nonzero(cells_to_pick_merged > 0)
-        # rospy.loginfo("Cells nonzero %i", cells_nonzero)
-        # #rand_idx = np.random.randint(0, len(cells_to_pick))
-        # rand_idx = np.random.randint(0, cells_nonzero)
-        # goal = cells_to_pick[rand_idx]
 
-        # find the nearest frontier medianfrontierPoints
-        robotPos = self.get_myPos(map_origin, res)
-        goal = self.pickMove(robotPos, cells_to_pick)
+        '''
+        cells_nonzero = np.count_nonzero(cells_to_pick > 0)
+        rospy.loginfo("Cells nonzero %i", cells_nonzero)
+        cells_nonzero = cells_nonzero / 2
+'''
 
-        self.prevGoal = goal
-        rospy.loginfo("======================= goal and res")
-        rospy.loginfo(str(goal))
-        rospy.loginfo(str(res))
+        for gl in range(0, len(cells_to_pick)):
+            rospy.loginfo("Cells in cells to pick %i: ", len(cells_to_pick))
+            rand_idx = np.random.randint(0, len(cells_to_pick))
+            #rand_idx = np.random.randint(0, cells_nonzero)
 
-        goal = (goal * res) + map_origin
-        return goal
+            goal = cells_to_pick[rand_idx]
+            if self.is_good_goal(goal[0], goal[1], 5, 5, 15, 5, 5):
+                self.prevGoal = goal
+
+                rospy.loginfo("Goal X: %i: ", goal[0])
+                rospy.loginfo("Goal Y: %i: ", goal[1])
+                rospy.loginfo(str(type(goal)))
+                rospy.loginfo(str(res))
+                goal = (goal * res) + map_origin
+                return goal
+
+        self.imStuck = True
+        return None
+
+    # Overload get_valid_cells to return explored cells
+
+    def is_good_goal(self, x, y, kernelX, kernelY, thFree, thUnknown, thWall):
+        width = self.latest_map_msg.info.width
+
+        sumFree = 0
+        sumUnknown = 0
+        sumWall = 0
+
+        limitX = int(np.floor(kernelX/2))
+        limitY = int(np.floor(kernelY/2))
+        rospy.loginfo("--------------------GOOD GOAL-------------------------------------")
+        idx = x + y * width
+
+        for i in range(-limitX, limitX+1):
+            for j in range(-limitY, limitY+1):
+                #if i != 0 and j != 0:
+
+                    id = int(idx - j * width - i)
+
+                    if id != idx:
+                        #rospy.loginfo(self.latest_map[id])
+                        if self.latest_map[id] == 0:
+                            sumFree = sumFree + 1
+                        elif self.latest_map[id] == -1:
+                            sumUnknown = sumUnknown + 1
+                        #elif self.latest_map[idx] > 20:
+                        else:
+                            sumWall = sumWall + 1
+
+        rospy.loginfo("sum wall %i", sumWall)
+        rospy.loginfo("sum free %i", sumFree)
+        rospy.loginfo("sum unknow %i", sumUnknown)
+        rospy.loginfo("--------------------CLOSE GOOD GOAL-------------------------------------")
+        # if sumFree > thFree and sumUnknown > thUnknown:
+
+        if sumFree > thFree and sumUnknown > thUnknown and sumWall < thWall:
+            return True
+        else :
+            return False
+
 
     def get_valid_cells(self, height, gridmap, width):
 
         #My extra code
-
-        gridmap_positive = gridmap[gridmap > -1]
-        mn = np.mean(gridmap_positive)
-        mx = np.max(gridmap_positive)
-        cells_positive = np.count_nonzero(gridmap_positive < mn)
-
         # Get Number of Explored Cells
 
         cells_explored = np.count_nonzero(gridmap > -1)
 
         rospy.loginfo("Cells Explored %i", cells_explored)
-        rospy.loginfo("Mean value is %d", mn)
-        rospy.loginfo("Max value is %d", mx)
-        rospy.loginfo("Cells Positive %i", cells_positive)
 
         # Create an Array with Cells to Pick
         cells = 0
-        cells_to_pick = np.zeros((cells_explored, 2))
+        cells_close = 0
+        cells_mid = 0
+        cells_far = 0
+
+        #cells_to_pick = np.zeros((cells_explored, 2))
         #cells_to_pick = np.zeros((cells_positive, 2))
+
+        cells_to_pick_close = np.zeros((cells_explored, 2))
+        cells_to_pick_mid = np.zeros((cells_explored, 2))
+        cells_to_pick_far = np.zeros((cells_explored, 2))
+
+        th_close = 80
+        th_mid = 120
 
         for y in xrange(0, height):
             for x in xrange(0, width):
@@ -113,14 +145,42 @@ class RandomExplorer(Explorer):
                     #if gridmap[idx] > -1 and gridmap[idx] < mn:
                     #if gridmap[idx] > -1:
                     #if self.check_cell_region(gridmap, x, y, width):
-                    cells_to_pick[cells][0] = x
-                    cells_to_pick[cells][1] = y
-                    cells = cells + 1
-        cells_to_pick = np.resize(cells_to_pick,(cells,2))
+                    if self.prevGoal is None or self.euclideanDistance_goal(self.prevGoal, x, y, th_close):
+                        cells_to_pick_close[cells_close][0] = x
+                        cells_to_pick_close[cells_close][1] = y
+                        cells_close = cells_close + 1
+                    elif self.prevGoal is None or self.euclideanDistance_goal(self.prevGoal, x, y, th_mid):
+                        cells_to_pick_mid[cells_mid][0] = x
+                        cells_to_pick_mid[cells_mid][1] = y
+                        cells_mid = cells_mid + 1
+                    else:
+                        cells_to_pick_far[cells_far][0] = x
+                        cells_to_pick_far[cells_far][1] = y
+                        cells_far = cells_far + 1
+
+
+        rospy.loginfo("***************************************")
+        rospy.loginfo("***************************************")
+        rospy.loginfo("***************************************")
+        rospy.loginfo("Cells close %i", cells_close)
+        rospy.loginfo("Cells mid %i", cells_mid)
+        rospy.loginfo("Cells far %i", cells_far)
+
+        if cells_mid > 20 and self.imStuck == False:
+            cells_to_pick = np.resize(cells_to_pick_mid,(cells_mid,2))
+        elif cells_far > 20:
+            cells_to_pick = np.resize(cells_to_pick_far,(cells_far,2))
+        else:
+            cells_to_pick = np.resize(cells_to_pick_close,(cells_close,2))
+
+        rospy.loginfo("***************************************")
+        rospy.loginfo("***************************************")
+        rospy.loginfo("***************************************")
+
+        #cells_to_pick = np.resize(cells_to_pick,(cells,2))
         return cells_to_pick
 
     def is_boundary(self, gridmap, idx, width):
-
         if gridmap[idx] == 0 and (gridmap[idx-width-1] == -1 or gridmap[idx-width] == -1 or gridmap[idx-width+1] == -1 or gridmap[idx-1] == -1 or gridmap[idx+1] == -1 or gridmap[idx+width-1] == -1 or gridmap[idx+width] == -1 or gridmap[idx+width+1] == -1):
             bool = True
         else:
@@ -128,96 +188,15 @@ class RandomExplorer(Explorer):
 
         return bool
 
-    # Get the means, size of frontier, and Euclidean distance to the mean
-    def getFrontierData(self, robotPos, frontierPoints):
+    def euclideanDistance_goal(self, last, x, y, threshold):
 
-        groups = self.groupFrontiers(frontierPoints)
-        means = []
-        sizes = []
-        distances = []
+        dist = np.sqrt(np.square(last[0] - x) + np.square(last[1] - y))
 
-        for group in groups:
+        if dist < threshold:
+            return True
+        else:
+            return False
 
-            mean = [0, 0]
-
-            for [x,y] in group:
-                mean[0] += x
-                mean[1] += y
-
-            mean[0] /= len(group)
-            mean[1] /= len(group)
-            means.append(mean)
-            sizes.append(len(group))
-            distances.append(sqrt((mean[0]-robotPos[0])**2, (mean[1]-robotPos[1])**2))
-
-        return means, sizes, distances
-
-    # Return the x,y coordinates to the closest median point along the grouped up frontiers
-    def pickMove(self, robotPos, frontierPoints):
-        groups = self.groupFrontiers(frontierPoints)
-        distances = []
-        medians = []
-        shortestDistanceGroup = 0
-        shortestDistance = 100000 # far far away
-
-        #   TODO: remove tiny groups
-        #   1) find the length of each group in groups
-        #   2) groups = any group with size > 0.25*largest group size
-
-        for g in range(len(groups)):
-            median = groups[g][int(np.floor(len(groups[g])/2))]
-            euclideanToMedian = np.sqrt(((median[0]-robotPos[0])**2) + ((median[1]-robotPos[1])**2))
-            distances.append(euclideanToMedian)
-            medians.append(median)
-            rospy.loginfo("====================groups")
-            rospy.loginfo(str(len(groups[g])))
-
-            # if euclideanToMedian < shortestDistance:
-            if (euclideanToMedian < shortestDistance):
-                shortestDistance = euclideanToMedian
-                shortestDistanceGroup = g
-
-            newGoal = np.array(medians[shortestDistanceGroup])
-        return newGoal
-
-    # Get a list of grouped up frontier points
-    def groupFrontiers(self, frontierPoints):
-        # [[1,2], [1,2], [1,2]]
-
-        SUB_SAMPLING_FACTOR = 100
-        THRESHOLD = SUB_SAMPLING_FACTOR + 1
-
-        rospy.loginfo("=======================")
-        rospy.loginfo(str(len(frontierPoints)))
-        # A 2D array, of grouped up points
-        groups = [[frontierPoints[0]]]
-        # rospy.loginfo("=======================")
-        # rospy.loginfo(groups)
-        # Loop through all the frontier points, except the first
-        # for [x,y] in range(1, len(frontierPoints)):
-        for nCells in range(1, len(frontierPoints), SUB_SAMPLING_FACTOR):
-            x = frontierPoints[nCells][0]
-            y = frontierPoints[nCells][1]
-            # Loop through every group, and check if this point is within
-            # 1, in both x and y of every point, and assign this point to the group,
-            # else create a new group, and assign this point, as the first in the group
-            groupFound = False
-            for g in range(len(groups)):
-                for [x2,y2] in groups[g]:
-                    # rospy.loginfo("=======================4")
-                    # If the two points are at most at corners, to each other, they are adjacent
-                    # (Euclidean distance)
-                    if np.sqrt((x2-x)**2 + (y2-y)**2) <= THRESHOLD and not groupFound:
-                    # They are adjacent, so add them to this group
-                        groups[g].append([x,y])
-                        groupFound = True
-
-            # No group has points that are near this point, so create a new group
-            # So make a new group, and add this point to it
-            if not groupFound:
-                groups.append([[x,y]])
-            # rospy.loginfo("=======================3")
-        return groups
 
 
     # Send Goal as Simple Message (no feedback)
