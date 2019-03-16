@@ -76,12 +76,13 @@ class RandomExplorer(Explorer):
         goal = self.pickMove(robotPos, cells_to_pick)
 
         self.prevGoal = goal
-        rospy.loginfo("=======================")
+        rospy.loginfo("======================= goal and res")
         rospy.loginfo(str(goal))
+        rospy.loginfo(str(res))
+
         goal = (goal * res) + map_origin
         return goal
 
-    # Overload get_valid_cells to return explored cells
     def get_valid_cells(self, height, gridmap, width):
 
         #My extra code
@@ -121,11 +122,11 @@ class RandomExplorer(Explorer):
     def is_boundary(self, gridmap, idx, width):
 
         if gridmap[idx] == 0 and (gridmap[idx-width-1] == -1 or gridmap[idx-width] == -1 or gridmap[idx-width+1] == -1 or gridmap[idx-1] == -1 or gridmap[idx+1] == -1 or gridmap[idx+width-1] == -1 or gridmap[idx+width] == -1 or gridmap[idx+width+1] == -1):
-            isBoundary = True
+            bool = True
         else:
-            isBoundary = False
+            bool = False
 
-        return isBoundary
+        return bool
 
     # Get the means, size of frontier, and Euclidean distance to the mean
     def getFrontierData(self, robotPos, frontierPoints):
@@ -153,61 +154,69 @@ class RandomExplorer(Explorer):
 
     # Return the x,y coordinates to the closest median point along the grouped up frontiers
     def pickMove(self, robotPos, frontierPoints):
-
         groups = self.groupFrontiers(frontierPoints)
         distances = []
         medians = []
         shortestDistanceGroup = 0
-        shortestDistance = 1000000 # Just a big number, to make sure it gets overwritten
+        shortestDistance = 100000 # far far away
+
+        #   TODO: remove tiny groups
+        #   1) find the length of each group in groups
+        #   2) groups = any group with size > 0.25*largest group size
 
         for g in range(len(groups)):
-            median = groups[g][np.floor(len(groups[g])/2)]
-            euclideanToMedian = np.sqrt((median[0]-robotPos[0])**2, (median[1]-robotPos[1])**2)
+            median = groups[g][int(np.floor(len(groups[g])/2))]
+            euclideanToMedian = np.sqrt(((median[0]-robotPos[0])**2) + ((median[1]-robotPos[1])**2))
             distances.append(euclideanToMedian)
+            medians.append(median)
+            rospy.loginfo("====================groups")
+            rospy.loginfo(str(len(groups[g])))
 
-            if euclideanToMedian < shortestDistance:
+            # if euclideanToMedian < shortestDistance:
+            if (euclideanToMedian < shortestDistance):
                 shortestDistance = euclideanToMedian
                 shortestDistanceGroup = g
-        return medians[shortestDistanceGroup]
+
+            newGoal = np.array(medians[shortestDistanceGroup])
+        return newGoal
 
     # Get a list of grouped up frontier points
     def groupFrontiers(self, frontierPoints):
-        # frontierPoints looks something like this: [[1,2], [1,2], [1,2], ...]
+        # [[1,2], [1,2], [1,2]]
 
-        SUB_SAMPLING_FACTOR = 3
+        SUB_SAMPLING_FACTOR = 100
         THRESHOLD = SUB_SAMPLING_FACTOR + 1
 
+        rospy.loginfo("=======================")
+        rospy.loginfo(str(len(frontierPoints)))
         # A 2D array, of grouped up points
         groups = [[frontierPoints[0]]]
-
+        # rospy.loginfo("=======================")
+        # rospy.loginfo(groups)
         # Loop through all the frontier points, except the first
+        # for [x,y] in range(1, len(frontierPoints)):
         for nCells in range(1, len(frontierPoints), SUB_SAMPLING_FACTOR):
-
             x = frontierPoints[nCells][0]
             y = frontierPoints[nCells][1]
-
             # Loop through every group, and check if this point is within
             # 1, in both x and y of every point, and assign this point to the group,
             # else create a new group, and assign this point, as the first in the group
             groupFound = False
-            groupToAddTo = None
-
             for g in range(len(groups)):
                 for [x2,y2] in groups[g]:
+                    # rospy.loginfo("=======================4")
                     # If the two points are at most at corners, to each other, they are adjacent
                     # (Euclidean distance)
-                    if not groupFound and np.sqrt((x2-x)**2 + (y2-y)**2) <= THRESHOLD:
-                        # They are adjacent, so add them to this group
-                        groupToAddTo = g
+                    if np.sqrt((x2-x)**2 + (y2-y)**2) <= THRESHOLD and not groupFound:
+                    # They are adjacent, so add them to this group
+                        groups[g].append([x,y])
                         groupFound = True
 
-            if groupFound:
-                groups[groupToAddTo].append([x,y])
-            else:
-                # No group has points that are near this point, so create a new group
-                # So make a new group, and add this point to it
+            # No group has points that are near this point, so create a new group
+            # So make a new group, and add this point to it
+            if not groupFound:
                 groups.append([[x,y]])
-
+            # rospy.loginfo("=======================3")
         return groups
 
 

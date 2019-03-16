@@ -2,7 +2,7 @@
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/home/metavm16/ROS-Path-Planning/install")
+  set(CMAKE_INSTALL_PREFIX "/user/HS124/kk00730/ROS-Path-Planning/install")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -34,7 +34,7 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/home/metavm16/ROS-Path-Planning/build/gtest/gtest/cmake_install.cmake")
+  include("/user/HS124/kk00730/ROS-Path-Planning/build/gtest/gtest/cmake_install.cmake")
 
 endif()
 

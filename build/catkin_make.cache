@@ -1,2 +1,2 @@
-kk-ch2
--DCATKIN_DEVEL_PREFIX=/home/metavm16/ROS-Path-Planning/devel -DCMAKE_INSTALL_PREFIX=/home/metavm16/ROS-Path-Planning/install -G Unix Makefiles
+kk-ch2:turtlebot_explorer
+-DCATKIN_DEVEL_PREFIX=/user/HS124/kk00730/ROS-Path-Planning/devel -DCMAKE_INSTALL_PREFIX=/user/HS124/kk00730/ROS-Path-Planning/install -G Unix Makefiles
