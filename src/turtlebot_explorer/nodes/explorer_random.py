@@ -174,13 +174,14 @@ class RandomExplorer(Explorer):
     def groupFrontiers(self, frontierPoints):
         # frontierPoints looks something like this: [[1,2], [1,2], [1,2], ...]
 
-        THRESHOLD = 3
+        SUB_SAMPLING_FACTOR = 3
+        THRESHOLD = SUB_SAMPLING_FACTOR + 1
 
         # A 2D array, of grouped up points
         groups = [[frontierPoints[0]]]
 
         # Loop through all the frontier points, except the first
-        for nCells in range(1, len(frontierPoints)):
+        for nCells in range(1, len(frontierPoints), SUB_SAMPLING_FACTOR):
 
             x = frontierPoints[nCells][0]
             y = frontierPoints[nCells][1]
