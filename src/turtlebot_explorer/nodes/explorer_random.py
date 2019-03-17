@@ -66,6 +66,7 @@ class RandomExplorer(Explorer):
                 #rospy.loginfo(str(type(goal)))
                 #rospy.loginfo(str(res))
                 goal = (goal * res) + map_origin
+                self.imStuck = False
                 return goal
 
         self.imStuck = True
@@ -119,8 +120,10 @@ class RandomExplorer(Explorer):
         # Get Number of Explored Cells
 
         cells_explored = np.count_nonzero(gridmap > -1)
+        cells_discovered = np.count_nonzero(gridmap == 0)
 
         rospy.loginfo("Cells Explored %i", cells_explored)
+        #rospy.loginfo("Cells Discovered %i", cells_discovered)
 
         # Create an Array with Cells to Pick
         cells = 0
@@ -139,7 +142,7 @@ class RandomExplorer(Explorer):
 
         th_close = 60
         th_mid = 90
-        th_mid_2 = 120
+        th_mid_2 = 130
 
         for y in xrange(0, height):
             for x in xrange(0, width):
@@ -174,11 +177,12 @@ class RandomExplorer(Explorer):
         rospy.loginfo("Cells mid2 %i", cells_mid_2)
         rospy.loginfo("Cells far %i", cells_far)
 
+        rand_mid = np.random.randint(0,100)
 
-        if cells_mid_2 > 20 and self.imStuck == False:
+        if cells_mid_2 > 20 and self.imStuck == False and rand_mid < 60:
             cells_to_pick = np.resize(cells_to_pick_mid_2,(cells_mid_2,2))
             rospy.loginfo("I choose cells mid 2")
-        elif cells_mid > 20 and self.imStuck == False:
+        elif cells_mid > 20 and self.imStuck == False and rand_mid >= 60:
             cells_to_pick = np.resize(cells_to_pick_mid,(cells_mid,2))
             rospy.loginfo("I choose cells mid")
         elif cells_far > 20:
