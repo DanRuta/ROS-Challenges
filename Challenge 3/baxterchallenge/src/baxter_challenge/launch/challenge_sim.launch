@@ -1,0 +1,11 @@
+<launch>
+    <!--Untuck arms-->
+    <node pkg="baxter_tools" type="tuck_arms.py" args="-u" name="untuck"/>
+
+    <!--Start JTAS and moveit-->
+    <param name="/jtas/stopped_velocity_tolerance" type="double" value="1.0"/>
+    <node pkg="baxter_interface" type="joint_trajectory_action_server.py" name="jtas"/>
+    <node pkg="topic_tools" type="relay" args="/robot/joint_states /joint_states" name="joint_state_relay"/>
+    <include file="$(find baxter_moveit_config)/launch/baxter_grippers.launch"/>
+
+</launch>

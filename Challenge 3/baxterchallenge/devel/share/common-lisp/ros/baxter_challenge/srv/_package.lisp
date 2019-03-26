@@ -1,0 +1,10 @@
+(cl:defpackage baxter_challenge-srv
+  (:use )
+  (:export
+   "OBJECTINSPECTION"
+   "<OBJECTINSPECTION-REQUEST>"
+   "OBJECTINSPECTION-REQUEST"
+   "<OBJECTINSPECTION-RESPONSE>"
+   "OBJECTINSPECTION-RESPONSE"
+  ))
+

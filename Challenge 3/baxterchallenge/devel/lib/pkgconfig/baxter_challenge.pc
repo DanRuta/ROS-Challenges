@@ -1,0 +1,8 @@
+prefix=/user/HS121/rw00636/baxterchallenge/devel
+
+Name: baxter_challenge
+Description: Description of baxter_challenge
+Version: 0.0.0
+Cflags: -I/user/HS121/rw00636/baxterchallenge/devel/include
+Libs: -L/user/HS121/rw00636/baxterchallenge/devel/lib 
+Requires: geometry_msgs roscpp rospy std_msgs message_runtime
