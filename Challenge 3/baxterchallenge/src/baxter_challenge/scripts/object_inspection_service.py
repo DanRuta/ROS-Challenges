@@ -66,7 +66,7 @@ class ObjectInspector:
         hsv = cv2.cvtColor(self.cv_image_roi, cv2.COLOR_BGR2HSV)  # Convert to hsv
         mask_blue = cv2.inRange(hsv, (100,150,0), (140,255,255))  # Mask of blue
         mask1_red = cv2.inRange(hsv, (0,70,50), (10,255,255))     # Mask of red (first end of colour wheel)
-        mask2_red = cv2.inRange(hsv, (170,70,50), (180,255,255))  # Mask of red (first end of colour wheel)
+        mask2_red = cv2.inRange(hsv, (170,70,50), (180,255,255))  # Mask of red (second end of colour wheel)
         mask_red = cv2.bitwise_or(mask1_red, mask2_red)
 
 	# pixel count comparison
