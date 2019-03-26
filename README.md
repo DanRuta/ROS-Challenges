@@ -7,7 +7,7 @@
 Path planning
 
 ## Challenge 3
-TBD
+Baxter challenge
 
 ## Challenge 4
 Self driving cars
