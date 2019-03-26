@@ -14,6 +14,7 @@ class ObjectInspector:
 
         self.bridge = CvBridge()
         self.cv_image = None
+	self.cv_image_roi = None
         self.image_set = False
         rospy.Subscriber("/cameras/head_camera/image", Image, self.image_callback)
 
@@ -36,40 +37,54 @@ class ObjectInspector:
             cv2.imwrite("/tmp/object_inspection.png", self.cv_image)
             self.image_set = False
         print("Choosing colour")
+	rospy.loginfo("======================== DETECTING")
+	self.cv_image_roi = self.get_subimage(self.cv_image)
+	colour = self.get_colour()
+	rospy.loginfo("======================== DETECTED")
+        return colour
 
-        # THIS IS THE BIT RACHEL EDITED
-        # Convert to hsv
-        hsv = cv2.cvtColor(self.cv_image, cv2.COLOR_BGR2HSV)
-        # Mask of blue
-        mask_blue = cv2.inRange(hsv, (100,150,0), (140,255,255))
-        # Mask of red (need 2 as different ends of the colour wheel)
-        mask1_red = cv2.inRange(hsv, (0,70,50), (10,255,255))
-        mask2_red = cv2.inRange(hsv, (170,70,50), (180,255,255))
-        # Final mask of red
+    def get_subimage(self, img):
+	# Get a ROI of the image	
+	IMG_W = 200
+	IMG_H = 100
+	heightStart = 250
+	widthStart = 530
+	image = img[heightStart:heightStart+IMG_H,widthStart:widthStart+IMG_W,:]
+	
+	print(img.shape)
+	
+	image_b = img[heightStart:heightStart+IMG_H,widthStart:widthStart+IMG_W,0]
+	image_g = img[heightStart:heightStart+IMG_H,widthStart:widthStart+IMG_W,1]
+	image_r = img[heightStart:heightStart+IMG_H,widthStart:widthStart+IMG_W,2]
+
+	cv2.imwrite("/tmp/object_inspection_crop.png", image)
+	return image
+
+
+    def get_colour(self)
+	# masking for colours 
+        hsv = cv2.cvtColor(self.cv_image_roi, cv2.COLOR_BGR2HSV)  # Convert to hsv
+        mask_blue = cv2.inRange(hsv, (100,150,0), (140,255,255))  # Mask of blue
+        mask1_red = cv2.inRange(hsv, (0,70,50), (10,255,255))     # Mask of red (first end of colour wheel)
+        mask2_red = cv2.inRange(hsv, (170,70,50), (180,255,255))  # Mask of red (first end of colour wheel)
         mask_red = cv2.bitwise_or(mask1_red, mask2_red)
 
+	# pixel count comparison
         sum_red = 0
         sum_blue = 0
-
-        # Count number of blue pixels
         for row in mask_blue:
             for pixel in row:
                 sum_blue = sum_blue + pixel
-
-        # Count number of red pixels
         for row in mask_red:
             for pixel in row:
                 sum_red = sum_red + pixel
 
-        # Determine if there are more red or blue pixels
         if sum_blue > sum_red:
             colour = "blue"
         else:
             colour = "red"
 
-        # Return the selected colour
         return colour
-
 
 if __name__ == "__main__":
     ObjectInspector()
