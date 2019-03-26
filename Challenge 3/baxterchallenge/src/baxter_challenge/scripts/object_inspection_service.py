@@ -36,6 +36,8 @@ class ObjectInspector:
             cv2.imwrite("/tmp/object_inspection.png", self.cv_image)
             self.image_set = False
         print("Choosing colour")
+
+        # THIS IS THE BIT RACHEL EDITED
         # Convert to hsv
         hsv = cv2.cvtColor(self.cv_image, cv2.COLOR_BGR2HSV)
         # Mask of blue
@@ -46,11 +48,27 @@ class ObjectInspector:
         # Final mask of red
         mask_red = cv2.bitwise_or(mask1_red, mask2_red)
 
+        sum_red = 0
+        sum_blue = 0
 
+        # Count number of blue pixels
+        for row in mask_blue:
+            for pixel in row:
+                sum_blue = sum_blue + pixel
 
-        colour = np.random.choice(["red", "blue"])
-        return mask_red
-        # return colour
+        # Count number of red pixels
+        for row in mask_red:
+            for pixel in row:
+                sum_red = sum_red + pixel
+
+        # Determine if there are more red or blue pixels
+        if sum_blue > sum_red:
+            colour = "blue"
+        else:
+            colour = "red"
+
+        # Return the selected colour
+        return colour
 
 
 if __name__ == "__main__":
