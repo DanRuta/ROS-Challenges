@@ -27,13 +27,10 @@ def inspect_object():
     """
     Connect to inspect object service and get the detected object colour
     """
-
     rospy.wait_for_service('inspect_object')
     try:
         inspect_object_srv = rospy.ServiceProxy('inspect_object', ObjectInspection)
         resp = inspect_object_srv()
-        print("HERE ----------------------")
-        print(resp)
         return resp.colour
     except rospy.ServiceException, e:
         print "Service call failed: %s" % e
@@ -45,8 +42,9 @@ def create_poses():
     """
     poses = {"object": Pose(position=Point(x=0.6, y=0.6, z=0.75), orientation=Quaternion(x=0, y=1, z=0, w=0)),
              "inspect": Pose(position=Point(x=0.5, y=0.0, z=1.6), orientation=Quaternion(x=0, y=0, z=0, w=1)),
-             "tote_red": Pose(position=Point(x=0.6, y=-0.1, z=0.75), orientation=Quaternion(x=0, y=1, z=0, w=0)),
-             "tote_blue": Pose(position=Point(x=0.6, y=0.3, z=0.75), orientation=Quaternion(x=0, y=1, z=0, w=0))}
+             "tote_red": Pose(position=Point(x=0.6, y=-0.1, z=0.85), orientation=Quaternion(x=0, y=1, z=0, w=0)),
+             "tote_blue": Pose(position=Point(x=0.6, y=0.3, z=0.85), orientation=Quaternion(x=0, y=1, z=0, w=0))}
+             # originally z = 0.75 for tote poses z
     return poses
 
 

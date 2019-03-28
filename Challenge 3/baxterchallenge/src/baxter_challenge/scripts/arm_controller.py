@@ -40,7 +40,27 @@ class ArmController:
         p.pose.position.z = 0.35
         self.scene.add_box("table", p, (0.9, 1.8, 0.7))
 
-        # Initialize moveit arm controller and gripper 
+        # Add tote_red to moveit scene
+        self.scene = moveit_commander.PlanningSceneInterface()
+        rospy.sleep(2)
+        p1 = PoseStamped()
+        p1.header.frame_id = self.robot.get_planning_frame()
+        p1.pose.position.x = 0.6
+        p1.pose.position.y = 0.1
+        p1.pose.position.z = 0.75
+        self.scene.add_box("tote_red", p1, (0.6, 0.35, 0.075))
+
+        # Add tote_red to moveit scene
+        self.scene = moveit_commander.PlanningSceneInterface()
+        rospy.sleep(2)
+        p2 = PoseStamped()
+        p2.header.frame_id = self.robot.get_planning_frame()
+        p2.pose.position.x = 0.6
+        p2.pose.position.y = 0.3
+        p2.pose.position.z = 0.75
+        self.scene.add_box("tote_blue", p2, (0.6, 0.35, 0.075))
+
+        # Initialize moveit arm controller and gripper
         self.moveit_arm = moveit_commander.MoveGroupCommander("{}_arm".format(arm))
         self.gripper = gripper.Gripper(arm)
         self.gripper.calibrate()
@@ -75,13 +95,13 @@ class ArmController:
 
     def move_arm(self, target, execute=True):
         print("Generating arm plan for target: {}".format(target))
-        self.moveit_arm.set_goal_tolerance(0.0005)
+        self.moveit_arm.set_goal_tolerance(0.0005) # 0.0005
         self.moveit_arm.set_planner_id("RRTConnectkConfigDefault")
         if type(target) == geometry_msgs.msg.Pose:
             self.moveit_arm.set_pose_target(target)
         elif type(target) == list:
             self.moveit_arm.set_joint_value_target(target)
-        self.moveit_arm.set_planning_time(3.0)
+        self.moveit_arm.set_planning_time(5.0) # 3.0
         grasping_arm_plan = self.moveit_arm.plan()
         rospy.sleep(0.5)
 
