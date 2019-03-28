@@ -2,7 +2,7 @@
     <arg name="real_robot" default="false"/>
     <arg name="attempts" default="-1"/>
     <!--Start object inspection service-->
-    <node pkg="baxter_challenge" type="object_inspection_service.py" name="inspection_service"/>
+    <node pkg="baxter_challenge" type="object_inspection_service.py" name="inspection_service" output="screen"/>
     <node pkg="baxter_challenge" type="run_challenge.py" name="pickandplace" output="screen">
     	<param name="sim" value="true" unless="$(arg real_robot)"/>
         <param name="sim" value="false" if="$(arg real_robot)"/>
