@@ -14,6 +14,7 @@ class ObjectInspector:
 
         self.bridge = CvBridge()
         self.cv_image = None
+        self.cv_image_roi = None
         self.image_set = False
         rospy.Subscriber("/cameras/head_camera/image", Image, self.image_callback)
 
