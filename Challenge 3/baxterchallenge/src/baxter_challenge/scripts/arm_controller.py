@@ -95,21 +95,28 @@ class ArmController:
 
     def move_arm(self, target, execute=True):
         print("Generating arm plan for target: {}".format(target))
+
+        # HINT 2: What planning settings is MoveIt using?
+        # These are the planner settings: default RRT configuration
+
         self.moveit_arm.set_goal_tolerance(0.0005) # 0.0005
-        self.moveit_arm.set_planner_id("RRTConnectkConfigDefault")
+
+        #I tried a different planner configuration but it doesn't make a difference
+        self.moveit_arm.set_planner_id("RRTstarkConfigDefault")
+        #self.moveit_arm.set_planner_id("RRTConnectkConfigDefault")
         if type(target) == geometry_msgs.msg.Pose:
             self.moveit_arm.set_pose_target(target)
         elif type(target) == list:
             self.moveit_arm.set_joint_value_target(target)
         self.moveit_arm.set_planning_time(5.0) # 3.0
         grasping_arm_plan = self.moveit_arm.plan()
-        rospy.sleep(0.5)
+        rospy.sleep(0.1)
 
         # Execute the movement
         if execute and len(grasping_arm_plan.joint_trajectory.points) > 0:
             print("Executing plans")
             self.moveit_arm.execute(grasping_arm_plan)
-            rospy.sleep(0.5)
+            rospy.sleep(0.1)
             return True
         elif len(grasping_arm_plan.joint_trajectory.points) == 0:
             print("Failed to find a plan - check target goal")

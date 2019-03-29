@@ -40,10 +40,10 @@ def create_poses():
     """
     Return set of posed which determine the positions used for the pick and place sequence
     """
-    poses = {"object": Pose(position=Point(x=0.6, y=0.6, z=0.75), orientation=Quaternion(x=0, y=1, z=0, w=0)),
-             "inspect": Pose(position=Point(x=0.5, y=0.0, z=1.6), orientation=Quaternion(x=0, y=0, z=0, w=1)),
-             "tote_red": Pose(position=Point(x=0.6, y=-0.1, z=0.85), orientation=Quaternion(x=0, y=1, z=0, w=0)),
-             "tote_blue": Pose(position=Point(x=0.6, y=0.3, z=0.85), orientation=Quaternion(x=0, y=1, z=0, w=0))}
+    poses = {"object": Pose(position=Point(x=0.6, y=0.6, z=0.75), orientation=Quaternion(x=0, y=1, z=0, w=0)), 	#Where the object is
+             "inspect": Pose(position=Point(x=0.5, y=0.0, z=1.6), orientation=Quaternion(x=0, y=0, z=0, w=1)), 		#Where the camera is
+             "tote_red": Pose(position=Point(x=0.6, y=-0.1, z=0.85), orientation=Quaternion(x=0, y=1, z=0, w=0)), 	#Where the red box is
+             "tote_blue": Pose(position=Point(x=0.6, y=0.3, z=0.85), orientation=Quaternion(x=0, y=1, z=0, w=0))} 	#Where the blue box is
              # originally z = 0.75 for tote poses z
     return poses
 
