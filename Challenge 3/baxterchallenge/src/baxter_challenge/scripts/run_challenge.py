@@ -115,6 +115,12 @@ class PickAndPlace:
         rospy.loginfo("AAAAAAAAAAAH SAVE ME")
         print("Move back to neutral position")
         target_pose = deepcopy(self.poses["object"])
+        target_pose.position.z += 0.3
+        b = self.grasping_arm.move_arm(target_pose)
+        print(" ### Could I move?: ", b, " ###")
+
+        print(" Oh God this is too high. Oh god.")
+        target_pose = deepcopy(self.poses["object"])
         # target_pose.position.z += 0.3
         b = self.grasping_arm.move_arm(target_pose)
         print(" ### Could I move?: ", b, " ###")
