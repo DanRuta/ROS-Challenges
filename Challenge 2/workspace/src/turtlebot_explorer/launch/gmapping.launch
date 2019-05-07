@@ -1,5 +1,0 @@
-<launch>
-  <arg name="3d_sensor" default="rplidar"/>  <!-- r200, kinect, asus_xtion_pro -->
-  <arg name="custom_gmapping_launch_file" default="$(find turtlebot_explorer)/launch/includes/$(arg 3d_sensor)_gmapping.launch.xml"/>
-  <include file="$(arg custom_gmapping_launch_file)"/>
-</launch>

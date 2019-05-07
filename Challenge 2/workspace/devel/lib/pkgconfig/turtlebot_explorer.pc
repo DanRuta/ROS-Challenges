@@ -1,8 +1,0 @@
-prefix=/user/HS124/kk00730/ROS-Path-Planning/devel
-
-Name: turtlebot_explorer
-Description: Description of turtlebot_explorer
-Version: 0.0.0
-Cflags: 
-Libs: -L/user/HS124/kk00730/ROS-Path-Planning/devel/lib 
-Requires: 

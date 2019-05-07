@@ -1,2 +1,0 @@
-baxter_challenge
--DCATKIN_DEVEL_PREFIX=/user/HS121/rw00636/baxterchallenge/devel -DCMAKE_INSTALL_PREFIX=/user/HS121/rw00636/baxterchallenge/install -G Unix Makefiles

@@ -1,8 +1,0 @@
-<launch>
-  <!-- Move base -->
-  <include file="$(find turtlebot_explorer)/launch/includes/move_base.launch.xml">
-	<param name="custom_param_file" value="$(find turtlebot_explorer)/param/custom_nav_param.yaml"/>
-  </include>
-
-  <node name="explorer" pkg="turtlebot_explorer" type="explorer_random_services.py" output="screen"/>
-</launch>
