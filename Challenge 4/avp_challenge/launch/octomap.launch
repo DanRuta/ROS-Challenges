@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<launch>
+    <arg name="pointcloud" default="velodyne_points" />
+
+  <node pkg="octomap_server" type="octomap_server_node" name="octomap_server">
+    <remap from="cloud_in" to="$(arg pointcloud)" />
+    <param name="frame_id" value="map" />
+    <param name="base_frame_id" value="base_link"/>
+    <param name="sensor_model/max_range" value="10" />
+  </node>
+</launch>
