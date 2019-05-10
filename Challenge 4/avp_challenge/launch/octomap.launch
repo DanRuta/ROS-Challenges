@@ -3,7 +3,7 @@
     <arg name="pointcloud" default="velodyne_points" />
 
   <node pkg="octomap_server" type="octomap_server_node" name="octomap_server">
-    <remap from="cloud_in" to="$(arg pointcloud)" />
+    <remap from="cloud_in" to="$(arg pointcloud)_filtered" />
     <param name="frame_id" value="map" />
     <param name="base_frame_id" value="base_link"/>
     <param name="sensor_model/max_range" value="10" />
@@ -17,8 +17,8 @@
     <remap from="~output" to="$(arg pointcloud)_filtered" />
     <rosparam>
       filter_field_name: z
-      filter_limit_min: -100
-      filter_limit_max: 100
+      filter_limit_min: -1
+      filter_limit_max: 0.05
       filter_limit_negative: False
     </rosparam>
   </node>
