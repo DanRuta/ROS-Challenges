@@ -1,0 +1,43 @@
+<launch>
+
+	<param name="use_sim_time" value="true" />
+
+	<!-- URDF File -->
+	<include file="$(find turtlebot_bringup)/launch/includes/robot.launch.xml">
+		<arg name="base" value="kobuki" />
+		<arg name="stacks" value="hexagons" />
+		<arg name="3d_sensor" value="kinect" />
+	</include>
+
+	<node pkg="robot_localization" output="screen" name="KFF"
+		type="ekf_localization_node">
+
+		<param name="dynamic_process_noise_covariance" value="true" />
+
+		<!-- ODOM -->
+		<param name="base_link_frame" value="base_footprint" />
+		<param name="odom0" value="/odom_corrected" />
+		<rosparam param	="odom0_config">[false, false, false, false, false, false,
+true, true, true, true, true, true, false, false, false]</rosparam>
+
+		<!-- IMU -->
+		<param name="imu0" value="/mobile_base/sensors/imu_data_corrected" />
+		<rosparam param="imu0_config">[false, false, false, true, true, true,
+false, false, false, true, true, true, true, true, true]</rosparam>
+
+		<!-- GPS -->
+		<param name="odom1" value="/odometry/gps" />
+		<rosparam param="odom1_config">[true, true, false, false, false,
+false,false, false, false, false, false, false, false, false, false]</rosparam>
+		<param name="odom1_differential" value="false" />
+		<param name="odom1_pose_rejection_threshold" value="0.35"/>
+	</node>
+
+	<node pkg="robot_localization" name="transf" type="navsat_transform_node">
+		<param name="use_odometry_yaw" value="true" />
+		<param name="magnetic_declination_radians" value="0.002219360677" />
+		<remap from="odometry/filtered" to="odom_corrected" />
+		<remap from="imu/data" to="/mobile_base/sensors/imu_data_corrected" />
+	</node>
+
+</launch>

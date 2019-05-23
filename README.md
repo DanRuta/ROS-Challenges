@@ -2,6 +2,9 @@
 
 ## Robotics challenge
 
+## Challenge 1
+Sensor fusion
+
 ## Challenge 2
 Path planning for exploration search
 
