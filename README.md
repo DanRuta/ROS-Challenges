@@ -10,3 +10,6 @@ Baxter grasping and moving challenge
 
 ## Challenge 4
 Octomap rendering for self driving cars
+
+---
+Final grade: 85%
