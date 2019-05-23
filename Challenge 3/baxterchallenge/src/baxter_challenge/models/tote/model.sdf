@@ -1,0 +1,141 @@
+<?xml version="1.0" ?>
+<sdf version="1.5">
+  <model name="grey_tote">
+    <static>true</static>
+    <link name="link">
+      <inertial>
+        <pose>0 0 0.141549545 0 0 0</pose>
+        <mass>3.53802</mass>
+        <inertia>
+          <ixx>0.068835836</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.139596236</iyy>
+          <iyz>0</iyz>
+          <izz>0.155908748</izz>
+        </inertia>
+      </inertial>
+
+      <collision name="side_wall_1">
+        <pose>0 -0.16523 0.025 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.58404 0.02602 0.05</size>
+          </box>
+        </geometry>
+      </collision>
+
+      <collision name="side_wall_2">
+        <pose>0 0.16523 0.025 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.58404 0.02602 0.05</size>
+          </box>
+        </geometry>
+      </collision>
+
+      <collision name="side_wall_3">
+        <pose>0.29202 0 0.025 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.02602 0.33046 0.05</size>
+          </box>
+        </geometry>
+      </collision>
+
+      <collision name="side_wall_4">
+        <pose>-0.29202 0 0.025 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.02602 0.33046 0.05</size>
+          </box>
+        </geometry>
+      </collision>
+
+      <collision name="bottom">
+        <pose>0 0 0.0 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.58404 0.33046 0.006</size>
+          </box>
+        </geometry>
+      </collision>
+
+      <visual name="side_wall_1">
+        <pose>0 -0.16523 0.025 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.58404 0.00602 0.05</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.6 0.6 0.6 1</ambient>
+          <diffuse>0.6 0.6 0.6 1</diffuse>
+          <specular>0.1 0.1 0.1 1</specular>
+          <emissive>0 0 0 0</emissive>
+        </material>
+      </visual>
+
+      <visual name="side_wall_2">
+        <pose>0 0.16523 0.025 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.58404 0.00602 0.05</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.6 0.6 0.6 1</ambient>
+          <diffuse>0.6 0.6 0.6 1</diffuse>
+          <specular>0.1 0.1 0.1 1</specular>
+          <emissive>0 0 0 0</emissive>
+        </material>
+      </visual>
+
+      <visual name="side_wall_3">
+        <pose>0.29202 0 0.025 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.00602 0.33046 0.05</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.6 0.6 0.6 1</ambient>
+          <diffuse>0.6 0.6 0.6 1</diffuse>
+          <specular>0.1 0.1 0.1 1</specular>
+          <emissive>0 0 0 0</emissive>
+        </material>
+      </visual>
+
+      <visual name="side_wall_4">
+        <pose>-0.29202 0 0.025 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.00602 0.33046 0.05</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.6 0.6 0.6 1</ambient>
+          <diffuse>0.6 0.6 0.6 1</diffuse>
+          <specular>0.1 0.1 0.1 1</specular>
+          <emissive>0 0 0 0</emissive>
+        </material>
+      </visual>
+
+      <visual name="bottom">
+        <pose>0 0 0.0 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.58404 0.33046 0.006</size>
+          </box>
+        </geometry>
+        <material>
+          <ambient>0.6 0.6 0.6 1</ambient>
+          <diffuse>0.6 0.6 0.6 1</diffuse>
+          <specular>0.1 0.1 0.1 1</specular>
+          <emissive>0 0 0 0</emissive>
+        </material>
+      </visual>
+
+    </link>
+  </model>
+</sdf>

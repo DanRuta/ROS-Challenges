@@ -1,0 +1,1 @@
+/usr/bin/c++  -fPIC   -shared -Wl,-soname,libgtest.so -o libgtest.so CMakeFiles/gtest.dir/src/gtest-all.cc.o  -L/user/HS121/rw00636/baxterchallenge/build/gtest/gtest/src -lpthread -Wl,-rpath,/user/HS121/rw00636/baxterchallenge/build/gtest/gtest/src 

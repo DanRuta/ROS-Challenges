@@ -1,0 +1,23 @@
+<launch>
+
+  <include file="$(find turtlebot_explorer)/launch/turtlebot.launch"/>
+  <include file="$(find turtlebot_explorer)/launch/gmapping.launch"/>
+  <include file="$(find turtlebot_explorer)/launch/includes/rplidar.launch.xml"/>
+  <include file="$(find turtlebot_explorer)/launch/explorer.launch"/>
+
+  <!-- Kinect Stuff (for image and other scan) -->
+  <include file="$(find turtlebot_bringup)/launch/3dsensor.launch">
+	<arg name="3d_sensor"   value="kinect"/>
+    <arg name="scan_topic" default="/kinect/scan"/>
+  </include>
+
+  <!-- Mobile Base Node (communicates with kobuki base (motors and io) -->
+  <include file="$(find turtlebot_bringup)/launch/includes/mobile_base.launch.xml">
+    <arg name="base" value="$(env TURTLEBOT_BASE)" />
+    <arg name="serialport" value="$(env TURTLEBOT_SERIAL_PORT)" />
+  </include>
+
+  <!-- RVIZ -->
+  <node pkg="rviz" type="rviz" name="rviz_explorer" args="-d $(find turtlebot_explorer)/explorer.rviz"/>
+
+</launch>

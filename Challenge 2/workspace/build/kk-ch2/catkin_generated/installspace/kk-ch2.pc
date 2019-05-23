@@ -1,0 +1,8 @@
+prefix=/user/HS124/kk00730/ROS-Path-Planning/install
+
+Name: kk-ch2
+Description: Description of kk-ch2
+Version: 0.0.0
+Cflags: 
+Libs: -L/user/HS124/kk00730/ROS-Path-Planning/install/lib 
+Requires: 
